@@ -41,5 +41,16 @@
         IsContentEditable.value = NewIsContentEditable
       },
     },
+    /* 强制新标签页跳转 */
+    ForceNewTabJumping: {
+      key: 'ForceNewTabJumping',
+      name: `ForceNewTabJumping`,
+      func: () => {
+        document.querySelectorAll('a[href]').forEach((ele: Element & { target?: string, onclick?: Function})=>{
+          ele.target = '_blank';
+          ele.onclick=()=>true;
+        })
+      },
+    },
   });
 </script>
