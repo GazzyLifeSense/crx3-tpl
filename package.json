@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && vite build && node post-build.js",
     "package": "pnpm run build && node build.js",
     "test": "vitest",
     "lint": "yarn run eslint --ext .js,.ts,.vue,.jsx src/",
