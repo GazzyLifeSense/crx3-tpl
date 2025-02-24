@@ -33,11 +33,10 @@
   }
 </style>
 <style lang="less" scoped>
-  :deep {
-    .whim-label {
-      color: aqua;
-    }
+  :deep(.whim-label) {
+    color: aqua;
   }
+  
   .whim-bookmark-grid {
     display: inline-block;
     padding: 4px;

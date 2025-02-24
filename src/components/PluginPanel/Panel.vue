@@ -111,8 +111,7 @@
   .panel-container {
     z-index: 2001;
     .panel-header { height: 44px; padding: 0 20px; background: @primary-header-bg;
-      :deep {
-        .ant-tabs-nav {
+      :deep(.ant-tabs-nav) {
           margin-bottom: 0;
           width: 100%;
           column-gap: 30px;
@@ -139,7 +138,6 @@
             }
           }
         }
-      }
     }
     .panel-content { flex: 1; }
     .func-btn{

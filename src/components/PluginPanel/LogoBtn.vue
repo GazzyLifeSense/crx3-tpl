@@ -96,8 +96,7 @@
     font-weight: 500;
     line-height: 8px;
   }
-  :deep{
-    .vct-panel-popover {
+  :deep(.vct-panel-popover) {
       .ant-popover-inner {
         box-shadow: none !important;
         border-radius: 8px;
@@ -107,5 +106,4 @@
         border-radius: 8px;
       }
     }
-  }
 </style>

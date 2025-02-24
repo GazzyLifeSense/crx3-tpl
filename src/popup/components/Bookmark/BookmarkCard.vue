@@ -20,9 +20,7 @@
 </script>
 
 <style lang="less" scoped>
-  :deep {
-    .ant-card-head {
+  :deep(.ant-card-head) {
       height: 30px;
     }
-  }
 </style>
