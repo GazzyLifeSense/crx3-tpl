@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Excel from 'exceljs';
 import { saveAs } from 'file-saver';
 import http from 'http';
@@ -136,7 +135,7 @@ export class GExcel {
    */
   public async importExcel(
     options: importExcelType
-  ): Promise<Record<(typeof header)[number], string>[]> {
+  ): Promise<Record<any[number], string>[]> {
     const { i = 1, header } = options;
     const workbook = await this.getWorkBook();
     const worksheet = workbook.getWorksheet(i);
@@ -224,6 +223,7 @@ export class GExcel {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
       const a = document.createElement('a');
+      // @ts-ignore
       a.href = URL.createObjectURL(blob);
       a.download = name + '.xlsx';
       document.body.appendChild(a);
@@ -464,6 +464,7 @@ export class GExcel {
 
 // 下载excel,csv类型的公共组件，可以解析表格单元格内的图片链接创建为图片
 export class GExportExcel {
+  [x: string]: any;
   /**
    * @可选 @param {Boolean} withImg 表示下载带图片 ✅
    * @可选 @param {String} sheetName 设置工作表名字 ✅ (默认Test)
@@ -512,7 +513,7 @@ export class GExportExcel {
    * @param {Number} 接收一个数值
    * @return {String} 列号值例如AA , AB , ... , BA
    */
-  getMappingCharCode(num) {
+  getMappingCharCode(num: number) {
     // 公式:  Math.floor((x - y) / 26)
     const cycleNum = Math.floor((num - 65) / 26);
     let initCharCode = String.fromCharCode(cycleNum + 64);
@@ -528,7 +529,7 @@ export class GExportExcel {
    * @param {Number} Num
    * @param {Number} increaseNum 递增值 , start:1
    */
-  numTranslateCharCode(Num, increaseNum) {
+  numTranslateCharCode(Num: number, increaseNum: number) {
     let charCode;
     if (Num > 90) {
       charCode = this.getMappingCharCode(Num);
@@ -553,7 +554,7 @@ export class GExportExcel {
   // 列单元格处理
   columnsCellHandle() {
     const { header } = this._options;
-    header.forEach((ele, index) => {
+    header.forEach((_ele: any, index: number) => {
       const colNumber = index + 1;
       const column = this.sheet.getColumn(colNumber);
       this.columnsAutoWidth(column, colNumber);
@@ -561,7 +562,7 @@ export class GExportExcel {
   }
 
   // 列自适应宽度处理
-  columnsAutoWidth(column, colNumber) {
+  columnsAutoWidth(column: { values: any[]; width: number; }, colNumber: number | null) {
     const { autoWidth } = this._options;
     if (autoWidth && column) {
       const maxLen = 80;
@@ -574,14 +575,14 @@ export class GExportExcel {
       } else {
         values = values.slice(rowHandleIndex - 1, column.values.length);
       }
-      values.forEach(ele => {
+      values.forEach((ele: { toString: () => string; }) => {
         let str = ele
           .toString()
           .replace(/[\u0391-\uFFE5A-Z]/g, 'aa')
           .trim();
         // 多行文字自适应
         if (/[\r\n]/g.test(str)) {
-          str = str.split(/[\r\n]/g)?.sort((a, b) => (a?.length >= b?.length ? -1 : 1))?.[0];
+          str = str.split(/[\r\n]/g)?.sort((a: string | any[], b: string | any[]) => (a?.length >= b?.length ? -1 : 1))?.[0];
         }
         // 更新当前列侯选宽度
         currentLen = str?.length > currentLen ? str.length : currentLen;
@@ -598,22 +599,19 @@ export class GExportExcel {
     return result;
   }
 
-  numFromRange(range) {
+  numFromRange(range: string) {
     var str = range.toLowerCase().split('');
     var al = str.length;
-    var getCharNumber = function (_char) {
-      return _char.charCodeAt() - 96;
-    };
     var numOut = 0;
     var charnum = 0;
     for (var i = 0; i < al; i++) {
-      charnum = getCharNumber(str[i]);
+      charnum = str[i].charCodeAt(0) - 96;
       numOut += charnum * Math.pow(26, al - i - 1);
     }
     return numOut;
   }
 
-  numToRange(number) {
+  numToRange(number: number) {
     let result = '';
     let num = number - 1;
     while (num >= 0) {
@@ -625,12 +623,12 @@ export class GExportExcel {
 
   // 列图片处理
   columnsImgHandle() {
-    let result = [];
+    let result: Promise<void>[] = [];
     const { header, withImg, range, withHyperLinks, attachContentOption } = this._options;
     if (withImg && range) {
-      header.forEach((ele, index) => {
+      header.forEach((ele: any, index: number) => {
         const colNumber = index + 1;
-        this.sheet.getColumn(colNumber).eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+        this.sheet.getColumn(colNumber).eachCell({ includeEmpty: true }, (cell: { value: any; style: { font: { color: { argb: string; }; }; }; }, rowNumber: number) => {
           const cellValue = cell.value;
           if (
             this.getImgColNum() === colNumber &&
@@ -682,7 +680,7 @@ export class GExportExcel {
     // 处理附加内容的图片
     if (attachContentOption?.content) {
       // 附加图片
-      attachContentOption.content?.forEach((value, index) => {
+      attachContentOption.content?.forEach((value: string, index: number) => {
         if (value?.includes('jpg')) {
           const cell = this.sheet.getCell(1, index + 1);
           cell.value = null;
@@ -715,17 +713,17 @@ export class GExportExcel {
     const { data, header } = this._options;
     const columnsKey = Object.keys(data[0]);
 
-    let _header = [];
-    let _columns = [];
+    let _header: any[] = [];
+    let _columns: any[] = [];
 
-    header.map(res => {
-      let _a = {};
+    header.map((res: string) => {
+      let _a: any = {};
       _a.header = '\uFEFF' + res;
       _header.push(_a);
     });
 
     columnsKey.map(res => {
-      let _b = {};
+      let _b: any = {};
       _b.key = res;
       _columns.push(_b);
     });
@@ -764,7 +762,7 @@ export class GExportExcel {
   // 处理row
   rowHandle() {
     const { data, autoHeight, lineHeight } = this._options;
-    data.map((res, index) => {
+    data.map((res: any, index: number) => {
       this.sheet.addRow(res, 'i');
       // 不开启自动高度将设置统一固定行高
       if (!autoHeight) {
@@ -778,26 +776,27 @@ export class GExportExcel {
   }
 
   // 获取远程文件
-  readRemoteFile(url) {
+  readRemoteFile(url: string) {
     return new Promise((resolve, reject) => {
       const req = http.get(url, res => {
-        let bufferArr = [];
+        let bufferArr: any[] = [];
         res.on('data', c => bufferArr.push(c));
         res.on('end', () => resolve(Buffer.concat(bufferArr)));
         req.on('error', err => reject(err));
       });
-      req.setTimeout(45 * 1000, err => reject(err));
+      req.setTimeout(45 * 1000, () => reject("overtime"));
       req.on('error', err => reject(err));
     });
   }
 
   // 导出数据
-  _exportData({ excelType, fileSuffix, filename } = {}, promise_arr, resolve_fn) {
+  _exportData(option: any, promise_arr: Promise<void>[], resolve_fn: { (value: unknown): void; (arg0: { code: number; }): void; }) {
+    const { excelType, fileSuffix, filename } = option
     let _fileSuffix = excelType;
     if (['xlsx', 'csv'].includes(fileSuffix)) _fileSuffix = fileSuffix;
     Promise.all(promise_arr)
       .then(() => {
-        this.workbook[excelType].writeBuffer().then(data => {
+        this.workbook[excelType].writeBuffer().then((data: BlobPart) => {
           const blob = new Blob([data], {
             type: 'text/csv;charset=UTF-8',
           });
