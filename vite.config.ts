@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { crx } from '@crxjs/vite-plugin';
+import progress from 'rollup-plugin-progress'
 import manifest from './src/manifest.json' assert { type: 'json' };
 import packageJson from './package.json' assert { type: 'json' };
 import path from 'path'
@@ -50,7 +51,7 @@ export default defineConfig((conditionalConfig: any)=>{
           '@': path.resolve(__dirname, 'src'),
       },
     },
-    plugins: [vue(), crx({ manifest })],
+    plugins: [vue(), crx({ manifest }), progress()],
     server: {
       // Fix for HMR based on https://github.com/crxjs/chrome-extension-tools/issues/746
       strictPort: true,
