@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { crx } from '@crxjs/vite-plugin';
 import manifest from './src/manifest.json' assert { type: 'json' };
-import packageJson from './package.json';
+import packageJson from './package.json' assert { type: 'json' };
 import path from 'path'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
@@ -39,9 +39,6 @@ export default defineConfig((conditionalConfig: any)=>{
       postcss: {
         plugins: postcssPlugins
       }
-    },
-    optimizeDeps: {
-      include: ['webextension-polyfill'],
     },
     build: {
       commonjsOptions: {
