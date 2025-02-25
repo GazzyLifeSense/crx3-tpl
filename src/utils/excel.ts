@@ -1,4 +1,4 @@
-import Excel from 'exceljs';
+import Excel, { CellHyperlinkValue } from 'exceljs';
 import { saveAs } from 'file-saver';
 import http from 'http';
 
@@ -160,6 +160,52 @@ export class GExcel {
     return excelList;
   }
 
+  public async toJson(options: { 
+    numWorksheet?: number, 
+    headers?: string[], 
+    ignoreFirstRowData?: boolean } 
+    = {}){
+    const ignoreCharFlag = '_'
+    let { numWorksheet = 1, headers = [], ignoreFirstRowData = true} = options;
+    const workbook = await this.getWorkBook();
+    const worksheet = workbook.getWorksheet(numWorksheet);
+    let sheetData;
+    // JSON数组
+    const data: any = [];
+
+    if(worksheet){
+      sheetData = worksheet.getSheetValues().filter(temp => !!temp?.length)
+      if(sheetData.length)
+        sheetData.forEach((rowData: Excel.RowValues, index) => {
+          // 跳过第一行非数据行
+          if(!index) return
+
+          // 移除每行首个非数据元素
+          (rowData as string[]).shift();
+
+          // 自动获取第一行数据为header
+          if(index == 1 && !headers.length){ 
+            headers = (rowData as string[]).reduce((a,b,i)=> a.concat((a.includes(b) ? b + '' + i : b)), headers)
+          }
+          
+          // 忽略第一行数据
+          if(index == 1 && ignoreFirstRowData) return
+
+          // 定义临时对象存储每一行内容
+          const rowObj: Record<(typeof headers)[number], string> = {};
+          (rowData as (CellHyperlinkValue[] | any[])).forEach((item, index) => {
+            const key = headers[index] || index.toString()
+            if(!key.startsWith(ignoreCharFlag)){
+              rowObj[headers[index] || index] = item?.text || item;
+            }
+          });
+          data.push(rowObj);
+        });
+        headers = headers.filter(header=>!header.startsWith(ignoreCharFlag))
+    }
+    return { data, headers };
+  }
+
   /**
    * @description: 导出excel，参数信息参考exceljs
    * @param {*} data 数据
@@ -196,7 +242,7 @@ export class GExcel {
     } = options;
     // 创建工作簿
     const workbook = new Excel.Workbook();
-    workbook.creator = '跨境易';
+    workbook.creator = 'GazzyLifesense';
     workbook.created = new Date();
     // 添加sheet
     this.worksheet = workbook.addWorksheet(sheetName, {

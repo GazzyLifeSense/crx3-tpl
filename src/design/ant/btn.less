@@ -1,10 +1,4 @@
 .ant-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px;
-  text-shadow: none;
-  box-shadow: none;
   font-size: @font-size-base;
 
   &.ant-btn-dashed {
@@ -12,9 +6,13 @@
     color: @primary-color;
   }
 
-  &[disabled] {
+  &[disabled],
+  &[disabled]:hover {
     text-shadow: none !important;
     box-shadow: none !important;
+    color: @text-gray-color;
+    background-color: @disabled;
+    border-color: @text-gray-color;
   }
 
   &:hover,
