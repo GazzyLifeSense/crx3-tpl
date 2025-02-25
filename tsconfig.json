@@ -1,26 +1,27 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2021",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
-    "allowJs": true
+    "noEmit": true,
+    "jsx": "preserve",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "exclude": ["build", "node_modules", "dist"],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "vite.config.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
